@@ -17,12 +17,12 @@ function byId(countryId){
                 reject(error);
                 return;
             }
-            resolve(results);
+            resolve(results); 
         })
     })
-};
+}; 
 
-function getCitiesByCountryId(countryName){
+function getCitiesByCountryName(countryName){
     return new Promise((resolve,reject)=>{
         connection.query(`select cities.name, cities.id from cities join countries on countries.id  =  cities.country_id where countries.name = ?`,[countryName],(error,results,fields)=>{
             if(error){
@@ -36,5 +36,5 @@ function getCitiesByCountryId(countryName){
 module.exports={
     getAll,
     byId,
-    getCitiesByCountryId
+    getCitiesByCountryName
 }
