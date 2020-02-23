@@ -17,7 +17,7 @@ function getAll({id,maxNumberOfBaths,minNumberOfBaths,maxNumberOfRooms,minNumber
          (${!maxPrice ? '1' : (params.push(maxPrice),'ap.price <= ?')}) 
          and
          (${!maxNumberOfRooms ? '1' : (params.push(maxNumberOfRooms),'ap.number_of_room <= ?')}) 
-         and 
+         and  
          (${!minNumberOfRooms ? '1' : (params.push(minNumberOfRooms),'ap.number_of_room >= ?')})
          and
          (${!propertyType ? '1' : (params.push(propertyType),'ap.property_type = ?')})
@@ -30,16 +30,15 @@ function getAll({id,maxNumberOfBaths,minNumberOfBaths,maxNumberOfRooms,minNumber
          and
          (${!maxSqft ? '1' : (params.push(maxSqft),'ap.sqft <= ?')}) 
          limit ${(page-1)*size}, ${size}`;
-         //console.log(query);
         connection.query(query, params, (error, results, fields) => {
             if (error) {
                 reject(error);
                 return;
             }
-            resolve(results);
+            resolve(results); 
         });
     });
-}
+} 
 
     
 
@@ -52,7 +51,7 @@ function byId(apartmentId){
             }
             resolve(results);
         });
-    });
+    }); 
 }
 function getImagesById(apartmentId){
     return new Promise((resolve, reject)=>{
@@ -71,19 +70,17 @@ function addApartment({user_id, address,city_id, price, number_of_room,number_of
             'insert into apartments (user_id, address, city_id, price, number_of_room, number_of_bath , sqft, description, sale_status, availability, property_type, main_image) values(?,?,?,?,?,?,?,?,?,?,?,?)';
             const params = [user_id, address,city_id, price, number_of_room,number_of_bath ,sqft, description, sale_status, availability,property_type, main_image];
         connection.query(query,params,(error,result,fields)=>{
-            console.log('result:', result);
             if(error) reject(error); 
-            resolve(result.insertId);
+            resolve(result.user_id); 
         });     
     });  
     return apartmentPromise;  
 }
 function addImagesToApartment(apartment_id,imagesArr) {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve,reject)=>{ 
         let data = '';
         imagesArr.map(image => data += (`(${apartment_id},${" '" +image.destination+image.filename+ " ' "}),`));
         data = data.slice(0,data.length-1);
-        console.log(data)
         connection.query(`insert into images (apartment_id,url) values ${data}`,(error,results,fields)=>{
             if(error)reject(error);
             resolve(results); 
@@ -93,9 +90,53 @@ function addImagesToApartment(apartment_id,imagesArr) {
 
 function getApartmentsByUserId(userId) {
     console.log(userId);
-    return new Promise((resolve,reject) => {
+    return new Promise((resolve,reject) => { 
         connection.query(`SELECT * FROM realtor.apartments where user_id=?`,[userId],(error,results,fields)=>{
-            console.log('im in the auery')
+            if(error){
+                reject(error);
+                return; 
+            }
+            resolve(results);
+        })
+    })
+}
+function getApartmentByStatus(status){
+    return new Promise((resolve,reject) => {
+        connection.query(`SELECT * FROM realtor.apartments where status=?`,[status],(error,results,fields)=>{
+            if(error){
+                reject(error);
+                return;
+            }
+            resolve(results)
+        })
+    })
+}
+function deleteApartment(id){
+    return new Promise((resolve,reject)=>{
+        connection.query("UPDATE apartments SET \`status\`= 'removed' where id = ?",[id],(error,results,fields)=>{
+            if(error){
+                reject(error);
+                return;
+            }
+            resolve(results);
+        })
+    })
+}
+function approveApartment(id){
+    return new Promise((resolve,reject)=>{
+        connection.query("Update apartments SET \`status\` = 'approved' where id = ?",[id],(error,results,fields)=>{
+            if(error){
+                reject(error);
+                return;
+            }
+            resolve(results);
+        })
+    })
+}
+
+function disapproveApartment(id){
+    return new Promise((resolve,reject)=>{
+        connection.query("UPDATE apartments SET \`status\` = 'denied' where id = ?",[id],(error,results,fields)=>{
             if(error){
                 reject(error);
                 return;
@@ -113,5 +154,9 @@ module.exports = {
     addApartment,
     addImagesToApartment,
     getApartmentsByUserId,
+    getApartmentByStatus,
+    deleteApartment,
+    approveApartment,
+    disapproveApartment
 };
 

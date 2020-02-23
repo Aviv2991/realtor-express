@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 var multer  = require('multer');
 var router = express.Router();
 const { getImagesById,
@@ -7,18 +8,37 @@ const { getImagesById,
         addApartment,
         addImagesToApartment,
         getApartmentsByUserId,
+        getApartmentByStatus,
+        deleteApartment,
+        approveApartment,
+        disapproveApartment,
          } = require('../db/api/apartments');
 
 const storage = multer.diskStorage({
-    destination:'images/apartment/',
+    destination: function (req, file, cb) {
+        console.log(path.join(__dirname,'..','images','apartment'));
+        try {
+            
+            cb(null, path.join(__dirname,'..','images','apartment'));
+        } catch (error) {
+            console.log(error);
+            
+        }
+      },
     filename:function(req,file,cbFunc){
-        cbFunc(null,file.originalname)
+        console.log('multer file nameing');
+        try {        
+            console.log(file.originalname);
+            
+            cbFunc(null,file.originalname)
+        } catch (error) {
+            console.log(error);
+        }
     }
 })
 const upload = multer({ storage:storage });
  
 router.get('/',function(req,res,next){
-    console.log('cookies', req.query); 
     getAll(req.query)
         .then(apartments=>res.status(200).json({apartments}))
         .catch(error=>res.status(500).json({error:error.message}));
@@ -37,19 +57,37 @@ router.get('/:apartmentId/images',function(req,res,next){
 });
 
 router.get('/users/:userId',function(req,res,next){
-    console.log('by user id',req.params.userId);
     getApartmentsByUserId(req.params.userId)
     .then(apartments => {res.status(200).json(apartments);console.log(apartments)})
     .catch(error => res.status(500).json({error:error.message}));
 });
+router.get('/status/:status',function(req,res,next){
+    getApartmentByStatus(req.params.status)
+    .then(apartments=>res.status(200).json(apartments))
+    .catch(error=>res.status(500).json({error:error.message})) 
+})   
+router.put('/remove/:id',function(req,res,next){
+    console.log(req.query)
+    deleteApartment(req.params.id)
+    .then(apartment=>res.status(200).json(apartment))
+    .catch(error=>res.status(500).json({error:error.message}))
+})
+router.put('/approve/:id',function(req,res,next){
+    approveApartment(req.params.id)
+    .then(apartment=>res.status(200).json(apartment))
+    .catch(error=>res.status(500).json({error:error.message}))
+})
+router.put('/deny/:id',function(req,res,next){
+    disapproveApartment(req.params.id)
+    .then(apartment=>res.status(200).json(apartment))
+    .catch(error=>res.status(500).json({error:error.message}))
+})
 
-
-// router.post()
 
 router.post('/',upload.array('images',5),async function(req,res,next){
     try{
         console.log('req.file',req.files); 
-        console.log('req.body',req.body);
+        console.log('req.body',req.query);
         const main_image = req.files[0].destination+req.files[0].originalname;
         const images = req.files.slice(1); 
         console.log('images',images);
@@ -61,5 +99,5 @@ router.post('/',upload.array('images',5),async function(req,res,next){
     }catch(error){
         throw new Error(`posting new apartment failed with ${error.message}`);
     } 
-})  
+})
 module.exports = router;  
