@@ -70,8 +70,9 @@ function addApartment({user_id, address,city_id, price, number_of_room,number_of
             'insert into apartments (user_id, address, city_id, price, number_of_room, number_of_bath , sqft, description, sale_status, availability, property_type, main_image) values(?,?,?,?,?,?,?,?,?,?,?,?)';
             const params = [user_id, address,city_id, price, number_of_room,number_of_bath ,sqft, description, sale_status, availability,property_type, main_image];
         connection.query(query,params,(error,result,fields)=>{
-            if(error) reject(error); 
-            resolve(result.user_id); 
+            if(error) reject(error);
+            
+            resolve(result.insertId); 
         });     
     });  
     return apartmentPromise;  
@@ -79,8 +80,10 @@ function addApartment({user_id, address,city_id, price, number_of_room,number_of
 function addImagesToApartment(apartment_id,imagesArr) {
     return new Promise((resolve,reject)=>{ 
         let data = '';
-        imagesArr.map(image => data += (`(${apartment_id},${" '" +image.destination+image.filename+ " ' "}),`));
+        imagesArr.forEach(image => data += (`(${apartment_id},${" '" +image.destination+image.filename+ " ' "}),`));        
         data = data.slice(0,data.length-1);
+        console.log(`data`, data);
+        
         connection.query(`insert into images (apartment_id,url) values ${data}`,(error,results,fields)=>{
             if(error)reject(error);
             resolve(results); 
