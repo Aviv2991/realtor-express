@@ -15,7 +15,7 @@ router.get('/:countryId',function(req,res,next){
 
 router.get('/:countryName/cities',function(req,res,next){
     getCitiesByCountryName(req.params.countryName)
-    .then(cities=>{res.status(200).json(cities);console.log(cities)})
+    .then(cities=>{res.status(200).json(cities)})
     .catch(error=>res.status(500).json({error:error.message}));
 }); 
 

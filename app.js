@@ -12,10 +12,10 @@ const apartmentRouter= require('./routes/apartments');
 const loginRouter = require('./routes/login');
 const countriesRouter = require('./routes/countries');
 const signupRouter = require('./routes/signup'); 
-const wish_listRouter = require('./routes/wish_list');
+const wish_listRouter = require('./routes/wish_list'); 
 
 const app = express();
-
+ 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
