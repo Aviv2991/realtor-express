@@ -16,7 +16,6 @@ const { getImagesById,
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        console.log(path.join(__dirname,'..','images','apartment'));
         try {
             
             cb(null, path.join(__dirname,'..','images','apartment'));
@@ -26,10 +25,7 @@ const storage = multer.diskStorage({
         }
       },
     filename:function(req,file,cbFunc){
-        console.log('multer file nameing');
         try {        
-            console.log(file.originalname);
-            
             cbFunc(null,file.originalname)
         } catch (error) {
             console.log(error);
