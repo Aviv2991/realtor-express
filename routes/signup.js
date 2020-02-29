@@ -17,7 +17,7 @@ router.post('/',async function(req,res,next) {
 
     }catch(error){
         throw new Error(`you have got a problem mate ${error.message}`);
-    }
+    } 
 })
 module.exports=router
   
