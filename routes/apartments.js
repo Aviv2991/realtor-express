@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         try {
             
-            cb(null, path.join(__dirname,'..','images','apartment'));
+            cb(null,'images/apartment/');
         } catch (error) {
             console.log(error);
             
@@ -31,7 +31,7 @@ const storage = multer.diskStorage({
             console.log(error);
         }
     }
-})
+}) 
 const upload = multer({ storage:storage });
  
 router.get('/',function(req,res,next){
@@ -45,7 +45,7 @@ router.get('/:apartmentId',function(req,res,next){
     .then(apartment=>res.status(200).json(apartment))
     .catch(error=>res.status(500).json({error:error.message}));
 });
-
+ 
 router.get('/:apartmentId/images',function(req,res,next){
     getImagesById(req.params.apartmentId)
     .then(apartment=>res.status(200).json(apartment))
@@ -99,4 +99,4 @@ router.post('/',upload.array('images',10),async function(req,res,next){
         throw new Error(`posting new apartment failed with ${error.message}`);
     } 
 })
-module.exports = router;  
+module.exports = router;   
