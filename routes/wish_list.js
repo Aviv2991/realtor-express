@@ -1,4 +1,5 @@
 const express = require('express');
+
 var router = express.Router();
 
 const {
@@ -19,4 +20,5 @@ router.post('/',async function(req,res,next){
         throw new Error(`adding apartment to wish list declined with ${error.message}`);
     }
 })
+
 module.exports = router;  
