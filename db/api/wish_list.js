@@ -14,6 +14,7 @@ function getWishListApartmentsByUserId(userId) {
         })
     })
 };
+
 function addApartmentToWishList(user_id,apartment_id){
     return new Promise((resolve,reject)=>{
         const query = `insert into wish_list (user_id,apartment_id) values (?,?)`;
@@ -27,6 +28,7 @@ function addApartmentToWishList(user_id,apartment_id){
         })
     })
 }
+
 module.exports = {
     getWishListApartmentsByUserId,
     addApartmentToWishList

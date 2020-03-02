@@ -10,6 +10,7 @@ function getAll(){
         })
     })
 };
+
 function byId(countryId){
     return new Promise((resolve,reject)=>{
         connection.query(`Select * from countries where id = ?`,[countryId],(error,results,fields)=>{
@@ -33,6 +34,7 @@ function getCitiesByCountryName(countryName){
         })
     })
 }
+
 module.exports={
     getAll,
     byId,

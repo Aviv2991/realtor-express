@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
 var multer  = require('multer');
+
 var router = express.Router();
+
 const { getImagesById,
         getAll,
         byId,
@@ -82,20 +84,13 @@ router.put('/deny/:id',function(req,res,next){
 
 router.post('/',upload.array('images',10),async function(req,res,next){
     try{
-        console.log('req.file',req.files); 
-        console.log('req.body',req.query);
         const main_image = req.files[0].destination+req.files[0].originalname;
         const images = req.files.slice(1); 
-        console.log('images',images);
-        console.log('main_image',main_image);
         const {user_id,address,price,sale_status,number_of_bath,number_of_room,description,availability,status,property_type,sqft,city_id} = req.body;
         const apartmentId = await addApartment({user_id,address,price,sale_status,number_of_bath,number_of_room,description,availability,status,property_type,sqft,city_id,main_image});
-        console.log(`apartmentId:`, apartmentId);
-        
         const addImages = await addImagesToApartment(apartmentId,images);
         res.status(201).json({id: apartmentId});
     }catch(error){        
-        
         throw new Error(`posting new apartment failed with ${error.message}`);
     } 
 })

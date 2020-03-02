@@ -40,8 +40,6 @@ function getAll({id,maxNumberOfBaths,minNumberOfBaths,maxNumberOfRooms,minNumber
     });
 } 
 
-    
-
 function byId(apartmentId){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT * from apartments where id = ? `,[apartmentId],(error, results, fields)=>{
@@ -53,6 +51,7 @@ function byId(apartmentId){
         });
     }); 
 }
+
 function getImagesById(apartmentId){
     return new Promise((resolve, reject)=>{
         connection.query(`SELECT group_concat(i.url) from apartments a join images i on a.id=i.apartment_id  where a.id = ? `,[apartmentId],(error, results, fields)=>{
@@ -64,6 +63,7 @@ function getImagesById(apartmentId){
         });
     }); 
 }
+
 function addApartment({user_id, address,city_id, price, number_of_room,number_of_bath ,sqft, description, sale_status, availability,property_type, main_image}) {
     const apartmentPromise = new Promise((resolve,reject)=>{
         const query = 
@@ -77,13 +77,12 @@ function addApartment({user_id, address,city_id, price, number_of_room,number_of
     });  
     return apartmentPromise;  
 }
+
 function addImagesToApartment(apartment_id,imagesArr) {
     return new Promise((resolve,reject)=>{ 
         let data = '';
         imagesArr.forEach(image => data += (`(${apartment_id},${" '" +image.destination+image.filename+ " ' "}),`));        
         data = data.slice(0,data.length-1);
-        console.log(`data`, data);
-        
         connection.query(`insert into images (apartment_id,url) values ${data}`,(error,results,fields)=>{
             if(error)reject(error);
             resolve(results); 
@@ -92,7 +91,6 @@ function addImagesToApartment(apartment_id,imagesArr) {
 };
 
 function getApartmentsByUserId(userId) {
-    console.log(userId);
     return new Promise((resolve,reject) => { 
         connection.query(`SELECT * FROM realtor.apartments where user_id=?`,[userId],(error,results,fields)=>{
             if(error){
@@ -103,6 +101,7 @@ function getApartmentsByUserId(userId) {
         })
     })
 }
+
 function getApartmentByStatus(status){
     return new Promise((resolve,reject) => {
         connection.query(`SELECT * FROM realtor.apartments where status=?`,[status],(error,results,fields)=>{
@@ -114,6 +113,7 @@ function getApartmentByStatus(status){
         })
     })
 }
+
 function deleteApartment(id){
     return new Promise((resolve,reject)=>{
         connection.query("UPDATE apartments SET \`status\`= 'removed' where id = ?",[id],(error,results,fields)=>{
@@ -125,6 +125,7 @@ function deleteApartment(id){
         })
     })
 }
+
 function approveApartment(id){
     return new Promise((resolve,reject)=>{
         connection.query("Update apartments SET \`status\` = 'approved' where id = ?",[id],(error,results,fields)=>{
