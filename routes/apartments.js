@@ -81,7 +81,7 @@ router.put('/deny/:id',function(req,res,next){
     .catch(error=>res.status(500).json({error:error.message}))
 })
 
-
+ 
 router.post('/',upload.array('images',10),async function(req,res,next){
     try{
         const main_image = req.files[0].destination+req.files[0].originalname;
