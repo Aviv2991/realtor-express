@@ -1,6 +1,6 @@
 const connection = require('../config');
 
-function getAll({id,maxNumberOfBaths,minNumberOfBaths,maxNumberOfRooms,minNumberOfRooms,propertyType, city,minSqft,maxSqft, country,minPrice,maxPrice, page = 1, size = 20}) {
+function getAll({id,maxNumberOfBaths,minNumberOfBaths,maxNumberOfRooms,minNumberOfRooms,propertyType, city,minSqft,maxSqft, country,minPrice,maxPrice, page = 1, size = 20,status='approved',sale_status}) {
     return new Promise((resolve, reject) => {
         const params = [];
         const query = `Select ap.*   from apartments ap 
@@ -28,7 +28,11 @@ function getAll({id,maxNumberOfBaths,minNumberOfBaths,maxNumberOfRooms,minNumber
          and
          (${!minSqft ? '1' : (params.push(minSqft),'ap.sqft >= ?')})
          and
-         (${!maxSqft ? '1' : (params.push(maxSqft),'ap.sqft <= ?')}) 
+         (${!maxSqft ? '1' : (params.push(maxSqft),'ap.sqft <= ?')})
+         and
+         (${!status ? '1' : (params.push(status),'ap.status = ?')})
+         and
+         (${!sale_status ? '1' : (params.push(sale_status),'ap.sale_status = ?')}) 
          limit ${(page-1)*size}, ${size}`;
         connection.query(query, params, (error, results, fields) => {
             if (error) {
@@ -61,7 +65,7 @@ function getImagesById(apartmentId){
             }
             resolve(results);
         });
-    }); 
+    });   
 }
 
 function addApartment({user_id, address,city_id, price, number_of_room,number_of_bath ,sqft, description, sale_status, availability,property_type, main_image}) {
@@ -91,7 +95,7 @@ function addImagesToApartment(apartment_id,imagesArr) {
 };
 
 function getApartmentsByUserId(userId) {
-    return new Promise((resolve,reject) => { 
+    return new Promise((resolve,reject) => {  
         connection.query(`SELECT * FROM realtor.apartments where user_id=?`,[userId],(error,results,fields)=>{
             if(error){
                 reject(error);

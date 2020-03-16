@@ -20,7 +20,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(cors({origin: 'http://localhost:3002', credentials: true}));
+app.use(cors({origin: 'http://localhost:3001', credentials: true}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
